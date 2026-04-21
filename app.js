@@ -49,10 +49,6 @@ function removeAscii(str) {
     return str.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/đ/g, 'd');
 }
 
-function formatCurrency(num) {
-    return new Intl.NumberFormat('vi-VN').format(num);
-}
-
 // Map stripped key to standard keys
 const normalizedTuitionMap = {};
 for (const [key, value] of Object.entries(tuitionMap)) {
@@ -86,7 +82,7 @@ function matchMajor(inputStr) {
          // Auto capitalize original key properly for Vietnamese
          let capsKey = capitalizeWords(bestMatch.originalKey);
          inputsMap['f-major'].value = capsKey; // optionally replace their text with standardized
-         inputsMap['f-tuition'].value = formatCurrency(bestMatch.tuition);
+         inputsMap['f-tuition'].value = bestMatch.tuition;
          majorMatchStatus.textContent = "✔ Tìm thấy ngành khớp";
          majorMatchStatus.className = 'match-status success';
     } else {
@@ -331,34 +327,27 @@ function updateRecordCount() {
     recordCountEl.textContent = rows;
 }
 
-/// CSV Export Functionality ///
+/// Excel (XLSX) Export Functionality ///
 exportCsvBtn.addEventListener('click', () => {
+    // Requires SheetJS (xlsx.js) included in HTML
     let rows = dataTableBody.querySelectorAll('tr');
     if(rows.length === 0) { alert('Không có dữ liệu để xuất!'); return; }
-
-    let csvContent = "STT,Họ và Tên,Ngày Sinh,Số Điện Thoại,Địa Chỉ,Ngành Học,Học Phí\n";
     
-    rows.forEach((row) => {
+    let data = [
+        ["STT", "Họ và Tên", "Ngày Sinh", "Số Điện Thoại", "Địa Chỉ", "Ngành Học", "Học Phí"]
+    ];
+    
+    rows.forEach(row => {
         let cols = row.querySelectorAll('td');
-        let rowData = Array.from(cols).slice(0, 7).map(col => {
-            let text = col.innerText.replace(/"/g, '""'); // Escape quotes
-            return `"${text}"`; // Wrap in quotes
-        });
-        csvContent += rowData.join(",") + "\n";
+        let rowData = Array.from(cols).slice(0, 7).map(col => col.innerText);
+        data.push(rowData);
     });
-
-    // Add UTF-8 BOM so Excel opens it with correct Vietnamese decoding
-    let blob = new Blob(["\uFEFF" + csvContent], { type: 'text/csv;charset=utf-8;' });
-    let link = document.createElement("a");
-    if (link.download !== undefined) {
-        let url = URL.createObjectURL(blob);
-        link.setAttribute("href", url);
-        link.setAttribute("download", `Data_TuyenSinh_${new Date().toISOString().slice(0,10)}.csv`);
-        link.style.visibility = 'hidden';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-    }
+    
+    const ws = XLSX.utils.aoa_to_sheet(data);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "DanhSach");
+    
+    XLSX.writeFile(wb, `Data_TuyenSinh_${new Date().toISOString().slice(0,10)}.xlsx`);
 });
 
 // Initialize Speech Object empty
