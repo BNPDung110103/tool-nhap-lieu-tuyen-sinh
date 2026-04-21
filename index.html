@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voice to Excel Data Entry</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+
+    <div class="app-layout">
+        <header>
+            <div class="title-area">
+                <h1>Voice to Excel <i class="fa-solid fa-file-excel" style="color: #10b981;"></i></h1>
+                <p>Nhập liệu tự động bằng giọng nói</p>
+            </div>
+            <div class="settings-area">
+                <select id="lang-select" class="lang-select" title="Chọn ngôn ngữ">
+                    <option value="vi-VN">Tiếng Việt</option>
+                    <option value="en-US">English</option>
+                </select>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <!-- Left Side: Form -->
+            <section class="form-section panel">
+                <h2>Cập nhật Thông tin</h2>
+                <button id="smart-capture-btn" class="btn btn-primary" style="margin-bottom: 20px; background: linear-gradient(135deg, #8b5cf6, #3b82f6); border: none; box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4);">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i> Đọc Nguyên Câu (Smart Capture)
+                </button>
+                
+                <div class="form-group">
+                    <label for="f-name">Họ và Tên</label>
+                    <div class="input-with-mic">
+                        <input type="text" id="f-name" class="form-control" autocomplete="off" placeholder="VD: Nguyễn Văn A">
+                        <button class="mic-btn-small" data-target="f-name" title="Đọc tên"><i class="fa-solid fa-microphone"></i></button>
+                    </div>
+                </div>
+
+                <div class="form-group grid-2">
+                    <div>
+                        <label for="f-dob">Ngày sinh</label>
+                        <div class="input-with-mic">
+                            <input type="text" id="f-dob" class="form-control" autocomplete="off" placeholder="VD: 01/01/2000">
+                            <button class="mic-btn-small" data-target="f-dob" title="Đọc ngày sinh"><i class="fa-solid fa-microphone"></i></button>
+                        </div>
+                    </div>
+                    <div>
+                        <label for="f-phone">Số ĐT</label>
+                        <div class="input-with-mic">
+                            <input type="text" id="f-phone" class="form-control" autocomplete="off" placeholder="VD: 090...">
+                            <button class="mic-btn-small" data-target="f-phone" title="Đọc số điện thoại"><i class="fa-solid fa-microphone"></i></button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="f-address">Địa chỉ</label>
+                    <div class="input-with-mic">
+                        <input type="text" id="f-address" class="form-control" autocomplete="off" placeholder="VD: Quận 1, TP.HCM">
+                        <button class="mic-btn-small" data-target="f-address" title="Đọc địa chỉ"><i class="fa-solid fa-microphone"></i></button>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="f-major">Ngành học</label>
+                    <div class="input-with-mic">
+                        <input type="text" id="f-major" class="form-control" autocomplete="off" placeholder="Đọc đúng tên ngành trong hình...">
+                        <button class="mic-btn-small" data-target="f-major" title="Đọc ngành"><i class="fa-solid fa-microphone"></i></button>
+                    </div>
+                    <div id="major-match-status" class="match-status"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="f-tuition">Học phí / tín chỉ (VNĐ)</label>
+                    <div class="input-with-mic">
+                        <input type="text" id="f-tuition" class="form-control form-control-readonly" readonly tabindex="-1" placeholder="Tự động tính dựa trên ngành học">
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button id="add-record-btn" class="btn btn-primary"><i class="fa-solid fa-plus"></i> Thêm vào Bảng</button>
+                    <button id="clear-form-btn" class="btn btn-secondary" title="Xoá trắn Form để nhập lại"><i class="fa-solid fa-eraser"></i></button>
+                </div>
+            </section>
+
+            <!-- Right Side: Table -->
+            <section class="table-section panel">
+                <div class="table-header">
+                    <h2>Danh sách Dữ liệu (<span id="record-count">0</span>)</h2>
+                    <button id="export-csv-btn" class="btn btn-success"><i class="fa-solid fa-download"></i> Xuất CSV</button>
+                </div>
+                
+                <div class="table-container">
+                    <table id="data-table">
+                        <thead>
+                            <tr>
+                                <th>STT</th>
+                                <th>Họ và Tên</th>
+                                <th>Ngày sinh</th>
+                                <th>Số ĐT</th>
+                                <th>Địa chỉ</th>
+                                <th>Ngành học</th>
+                                <th>Học phí</th>
+                                <th>Xoá</th>
+                            </tr>
+                        </thead>
+                        <tbody id="table-body">
+                            <!-- Data rows will inject here -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+        
+        <div id="global-recording-status" class="global-status hidden">
+            <div class="pulse-ring"></div>
+            <span id="listening-indicator-text">Đang nghe...</span>
+            <button id="stop-global-mic" class="btn btn-danger btn-circle" title="Dừng thu âm"><i class="fa-solid fa-stop"></i></button>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
