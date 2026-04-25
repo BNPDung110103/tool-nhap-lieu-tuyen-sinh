@@ -5,6 +5,7 @@ const addRecordBtn = document.getElementById('add-record-btn');
 const clearFormBtn = document.getElementById('clear-form-btn');
 const smartCaptureBtn = document.getElementById('smart-capture-btn');
 const exportCsvBtn = document.getElementById('export-csv-btn');
+const clearTableBtn = document.getElementById('clear-table-btn');
 const globalStatus = document.getElementById('global-recording-status');
 const stopGlobalMicBtn = document.getElementById('stop-global-mic');
 const indicatorText = document.getElementById('listening-indicator-text');
@@ -197,32 +198,9 @@ function initSpeechRecognition() {
                 parseSmartCapture(rawStr);
                 return;
             }
-
-            let el = inputsMap[currentTargetId];
-            if (currentTargetId === 'f-dob') {
-                 // Try to format dates, "mùng 1 tháng 1 năm 2000" -> logic is complex, keep exact text for safety or basic replace
-                 rawStr = rawStr.replace(/tháng/g, '/').replace(/năm/g, '/').replace(/mùng/g,'').replace(/ /g,'');
-            } 
-            if (currentTargetId === 'f-phone') {
-                 rawStr = rawStr.replace(/[^0-9]/g, '');
-            }
-
-            if (el.value && !el.value.endsWith(' ')) {
-                el.value += ' ' + rawStr;
-            } else {
-                el.value += rawStr;
-            }
-            
-            // Clean up values
-            el.value = el.value.trim();
-
-            if (currentTargetId === 'f-major') {
-                matchMajor(el.value);
-            }
         }
         
-        let labelName = document.querySelector(`label[for="${currentTargetId}"]`)?.innerText || 'ô nhập liệu';
-        indicatorText.innerText = interimTranscript ? `Nghe: ${interimTranscript}` : `Đang thu âm cho [${labelName}]...`;
+        indicatorText.innerText = interimTranscript ? `Nghe: ${interimTranscript}` : `Đang thu âm cho [Nguyên Câu]...`;
     };
 
     recognition.onerror = (event) => { stopGlobalMic(); };
@@ -238,14 +216,6 @@ function startRecordingFor(targetId) {
     currentTargetId = targetId;
     recognition.lang = langSelect.value;
     
-    // UI logic for mic buttons
-    document.querySelectorAll('.mic-btn-small').forEach(btn => btn.classList.remove('listening'));
-    
-    let targetBtn = document.querySelector(`button[data-target="${targetId}"]`);
-    if(targetBtn) {
-        targetBtn.classList.add('listening');
-    }
-
     setTimeout(() => { try { isRecording = true; recognition.start(); } catch(e){} }, 100);
 }
 
@@ -254,13 +224,17 @@ function stopGlobalMic() {
     currentTargetId = null;
     if(recognition) recognition.stop();
     globalStatus.classList.add('hidden');
-    document.querySelectorAll('.mic-btn-small').forEach(btn => btn.classList.remove('listening'));
 }
 
-document.querySelectorAll('.mic-btn-small').forEach(btn => {
+// Clear buttons logic
+document.querySelectorAll('.clear-btn-small').forEach(btn => {
     btn.addEventListener('click', (e) => {
         let target = e.currentTarget.getAttribute('data-target');
-        startRecordingFor(target);
+        if (inputsMap[target]) {
+            inputsMap[target].value = '';
+            if (target === 'f-major') matchMajor('');
+            inputsMap[target].focus();
+        }
     });
 });
 
@@ -332,6 +306,65 @@ function updateRecordCount() {
         let firstCell = row.querySelector('td:first-child');
         if (firstCell) {
             firstCell.textContent = index + 1;
+        }
+    });
+    
+    // Auto-save sau mỗi lần bảng thay đổi
+    saveTableData();
+}
+
+/// LocalStorage (Auto-save) Functionality ///
+function saveTableData() {
+    let rows = dataTableBody.querySelectorAll('tr');
+    let data = [];
+    rows.forEach(row => {
+        let cols = row.querySelectorAll('td');
+        data.push({
+            name: cols[1].innerText,
+            dob: cols[2].innerText,
+            phone: cols[3].innerText,
+            address: cols[4].innerText,
+            major: cols[5].innerText,
+            tuition: cols[6].innerText
+        });
+    });
+    localStorage.setItem('voiceExcelData', JSON.stringify(data));
+}
+
+function loadTableData() {
+    let saved = localStorage.getItem('voiceExcelData');
+    if (saved) {
+        let data = JSON.parse(saved);
+        data.forEach(item => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td></td>
+                <td>${item.name}</td>
+                <td>${item.dob}</td>
+                <td>${item.phone}</td>
+                <td>${item.address}</td>
+                <td>${item.major}</td>
+                <td>${item.tuition}</td>
+                <td><button class="delete-row-btn" title="Xóa dòng này"><i class="fa-solid fa-xmark"></i></button></td>
+            `;
+            row.querySelector('.delete-row-btn').addEventListener('click', () => {
+                row.remove();
+                updateRecordCount();
+            });
+            dataTableBody.appendChild(row);
+        });
+        updateRecordCount();
+    }
+}
+
+// Load data on start
+document.addEventListener('DOMContentLoaded', loadTableData);
+
+if(clearTableBtn) {
+    clearTableBtn.addEventListener('click', () => {
+        if(confirm("Bạn có chắc chắn muốn XÓA TOÀN BỘ bảng không? (Thao tác này không thể hoàn tác)")) {
+            dataTableBody.innerHTML = '';
+            updateRecordCount();
         }
     });
 }

@@ -114,8 +114,6 @@ p { color: var(--text-secondary); font-size: 1rem; }
 .form-section { gap: 16px; overflow-y: auto; }
 
 .form-group { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
-.form-group.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
-.form-group.grid-2 > div { display: flex; flex-direction: column; gap: 8px; }
 
 label { font-size: 0.9rem; color: var(--text-secondary); font-weight: 500; }
 
@@ -145,7 +143,7 @@ label { font-size: 0.9rem; color: var(--text-secondary); font-weight: 500; }
 
 .form-control-readonly { color: var(--success-color); font-weight: 600; background: rgba(0,0,0,0.1); cursor: not-allowed; }
 
-.mic-btn-small {
+.clear-btn-small {
     background: transparent;
     border: none;
     color: var(--text-secondary);
@@ -157,14 +155,7 @@ label { font-size: 0.9rem; color: var(--text-secondary); font-weight: 500; }
     justify-content: center;
     transition: all 0.2s;
 }
-.mic-btn-small:hover { color: var(--accent-color); background: rgba(59, 130, 246, 0.1); }
-.mic-btn-small.listening { color: var(--danger-color); background: rgba(239, 68, 68, 0.1); animation: mic-pulse 1.5s infinite; }
-
-@keyframes mic-pulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.1); color: #f87171; }
-    100% { transform: scale(1); }
-}
+.clear-btn-small:hover { color: var(--danger-color); background: rgba(239, 68, 68, 0.1); }
 
 .match-status { font-size: 0.8rem; height: 16px; margin-top: -4px; transition: color 0.3s; }
 .match-status.success { color: var(--success-color); }
@@ -196,6 +187,7 @@ label { font-size: 0.9rem; color: var(--text-secondary); font-weight: 500; }
 /* Table Styles */
 .table-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid var(--glass-border); padding-bottom: 12px; }
 .table-header h2 { border-bottom: none; padding-bottom: 0; margin-bottom: 0; }
+.table-actions { display: flex; gap: 10px; }
 
 .table-container { flex: 1; overflow: auto; border: 1px solid var(--glass-border); border-radius: 8px; }
 

@@ -39,24 +39,23 @@
                     <label for="f-name">Họ và Tên</label>
                     <div class="input-with-mic">
                         <input type="text" id="f-name" class="form-control" autocomplete="off" placeholder="VD: Nguyễn Văn A">
-                        <button class="mic-btn-small" data-target="f-name" title="Đọc tên"><i class="fa-solid fa-microphone"></i></button>
+                        <button class="clear-btn-small" data-target="f-name" title="Xóa" tabindex="-1"><i class="fa-solid fa-xmark"></i></button>
                     </div>
                 </div>
 
-                <div class="form-group grid-2">
-                    <div>
-                        <label for="f-dob">Ngày sinh</label>
-                        <div class="input-with-mic">
-                            <input type="text" id="f-dob" class="form-control" autocomplete="off" placeholder="VD: 01/01/2000">
-                            <button class="mic-btn-small" data-target="f-dob" title="Đọc ngày sinh"><i class="fa-solid fa-microphone"></i></button>
-                        </div>
+                <div class="form-group">
+                    <label for="f-dob">Ngày sinh</label>
+                    <div class="input-with-mic">
+                        <input type="text" id="f-dob" class="form-control" autocomplete="off" placeholder="VD: 01/01/2000">
+                        <button class="clear-btn-small" data-target="f-dob" title="Xóa" tabindex="-1"><i class="fa-solid fa-xmark"></i></button>
                     </div>
-                    <div>
-                        <label for="f-phone">Số ĐT</label>
-                        <div class="input-with-mic">
-                            <input type="text" id="f-phone" class="form-control" autocomplete="off" placeholder="VD: 090...">
-                            <button class="mic-btn-small" data-target="f-phone" title="Đọc số điện thoại"><i class="fa-solid fa-microphone"></i></button>
-                        </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="f-phone">Số ĐT</label>
+                    <div class="input-with-mic">
+                        <input type="text" id="f-phone" class="form-control" autocomplete="off" placeholder="VD: 090...">
+                        <button class="clear-btn-small" data-target="f-phone" title="Xóa" tabindex="-1"><i class="fa-solid fa-xmark"></i></button>
                     </div>
                 </div>
 
@@ -64,15 +63,15 @@
                     <label for="f-address">Địa chỉ</label>
                     <div class="input-with-mic">
                         <input type="text" id="f-address" class="form-control" autocomplete="off" placeholder="VD: Quận 1, TP.HCM">
-                        <button class="mic-btn-small" data-target="f-address" title="Đọc địa chỉ"><i class="fa-solid fa-microphone"></i></button>
+                        <button class="clear-btn-small" data-target="f-address" title="Xóa" tabindex="-1"><i class="fa-solid fa-xmark"></i></button>
                     </div>
                 </div>
 
                 <div class="form-group">
                     <label for="f-major">Ngành học</label>
                     <div class="input-with-mic">
-                        <input type="text" id="f-major" class="form-control" autocomplete="off" placeholder="Đọc đúng tên ngành trong hình...">
-                        <button class="mic-btn-small" data-target="f-major" title="Đọc ngành"><i class="fa-solid fa-microphone"></i></button>
+                        <input type="text" id="f-major" class="form-control" autocomplete="off" placeholder="Nhập hoặc đọc đúng tên ngành...">
+                        <button class="clear-btn-small" data-target="f-major" title="Xóa" tabindex="-1"><i class="fa-solid fa-xmark"></i></button>
                     </div>
                     <div id="major-match-status" class="match-status"></div>
                 </div>
@@ -94,7 +93,10 @@
             <section class="table-section panel">
                 <div class="table-header">
                     <h2>Danh sách Dữ liệu (<span id="record-count">0</span>)</h2>
-                    <button id="export-csv-btn" class="btn btn-success"><i class="fa-solid fa-download"></i> Xuất file Excel (.xlsx)</button>
+                    <div class="table-actions">
+                        <button id="clear-table-btn" class="btn btn-danger" style="margin-right: 10px;"><i class="fa-solid fa-trash-can"></i> Xóa toàn bộ</button>
+                        <button id="export-csv-btn" class="btn btn-success"><i class="fa-solid fa-download"></i> Xuất file Excel (.xlsx)</button>
+                    </div>
                 </div>
                 
                 <div class="table-container">
@@ -127,6 +129,6 @@
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <script src="app.js?v=2"></script>
+    <script src="app.js?v=3"></script>
 </body>
 </html>
