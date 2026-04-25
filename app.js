@@ -80,11 +80,8 @@ function matchMajor(inputStr) {
     }
 
     if (bestMatch) {
-         // Auto capitalize original key properly for Vietnamese
-         let capsKey = capitalizeWords(bestMatch.originalKey);
-         inputsMap['f-major'].value = capsKey; // optionally replace their text with standardized
          inputsMap['f-tuition'].value = bestMatch.tuition;
-         majorMatchStatus.textContent = "✔ Tìm thấy ngành khớp";
+         majorMatchStatus.textContent = "✔ Tìm thấy ngành khớp: " + capitalizeWords(bestMatch.originalKey);
          majorMatchStatus.className = 'match-status success';
     } else {
          inputsMap['f-tuition'].value = '';
