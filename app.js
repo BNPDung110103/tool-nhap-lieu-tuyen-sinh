@@ -323,8 +323,17 @@ addRecordBtn.addEventListener('click', () => {
 });
 
 function updateRecordCount() {
-    const rows = dataTableBody.querySelectorAll('tr').length;
-    recordCountEl.textContent = rows;
+    const rows = dataTableBody.querySelectorAll('tr');
+    recordCountEl.textContent = rows.length;
+    recordCount = rows.length; // Đồng bộ biến đếm để tạo dòng mới chính xác
+    
+    // Đánh lại Số thứ tự (STT) cho tất cả các dòng còn lại
+    rows.forEach((row, index) => {
+        let firstCell = row.querySelector('td:first-child');
+        if (firstCell) {
+            firstCell.textContent = index + 1;
+        }
+    });
 }
 
 /// Excel (XLSX) Export Functionality ///
