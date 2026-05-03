@@ -7,7 +7,9 @@ const smartCaptureBtn = document.getElementById('smart-capture-btn');
 const exportCsvBtn = document.getElementById('export-csv-btn');
 const clearTableBtn = document.getElementById('clear-table-btn');
 const globalStatus = document.getElementById('global-recording-status');
-const stopGlobalMicBtn = document.getElementById('stop-global-mic');
+const acceptVoiceBtn = document.getElementById('accept-voice-btn');
+const retryVoiceBtn = document.getElementById('retry-voice-btn');
+const cancelVoiceBtn = document.getElementById('cancel-voice-btn');
 const indicatorText = document.getElementById('listening-indicator-text');
 const majorMatchStatus = document.getElementById('major-match-status');
 
@@ -159,6 +161,7 @@ function parseSmartCapture(text) {
 let recognition;
 let isRecording = false;
 let currentTargetId = null; 
+let currentDraftText = ''; 
 
 function initSpeechRecognition() {
     window.SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -188,20 +191,18 @@ function initSpeechRecognition() {
             }
         }
 
-        if (finalTranscript && currentTargetId) {
-            let rawStr = finalTranscript.trim();
-
-            if (currentTargetId === 'smart-capture') {
-                parseSmartCapture(rawStr);
-                return;
-            }
-        }
-        
-        indicatorText.innerText = interimTranscript ? `Nghe: ${interimTranscript}` : `Đang thu âm cho [Nguyên Câu]...`;
+        currentDraftText = (finalTranscript + ' ' + interimTranscript).trim();
+        indicatorText.innerText = currentDraftText ? `Nghe: ${currentDraftText}` : `Đang thu âm cho [Nguyên Câu]...`;
     };
 
     recognition.onerror = (event) => { stopGlobalMic(); };
-    recognition.onend = () => { if (isRecording) { try { recognition.start(); } catch(e){ stopGlobalMic(); } } else { stopGlobalMic(); } };
+    recognition.onend = () => { 
+        if (isRecording) { 
+            try { recognition.start(); } catch(e){ stopGlobalMic(); } 
+        } else { 
+            stopGlobalMic(); 
+        } 
+    };
 }
 
 function startRecordingFor(targetId) {
@@ -211,6 +212,7 @@ function startRecordingFor(targetId) {
     if(isRecording) recognition.stop(); // Stop current one
     
     currentTargetId = targetId;
+    currentDraftText = '';
     recognition.lang = langSelect.value;
     
     setTimeout(() => { try { isRecording = true; recognition.start(); } catch(e){} }, 100);
@@ -219,6 +221,7 @@ function startRecordingFor(targetId) {
 function stopGlobalMic() {
     isRecording = false;
     currentTargetId = null;
+    currentDraftText = '';
     if(recognition) recognition.stop();
     globalStatus.classList.add('hidden');
 }
@@ -241,7 +244,28 @@ if(smartCaptureBtn) {
     });
 }
 
-stopGlobalMicBtn.addEventListener('click', stopGlobalMic);
+if(acceptVoiceBtn) {
+    acceptVoiceBtn.addEventListener('click', () => {
+        if (currentDraftText && currentTargetId === 'smart-capture') {
+            parseSmartCapture(currentDraftText);
+        }
+        stopGlobalMic();
+    });
+}
+
+if(retryVoiceBtn) {
+    retryVoiceBtn.addEventListener('click', () => {
+        stopGlobalMic();
+        setTimeout(() => {
+            startRecordingFor('smart-capture');
+        }, 300);
+    });
+}
+
+if(cancelVoiceBtn) {
+    cancelVoiceBtn.addEventListener('click', stopGlobalMic);
+}
+
 langSelect.addEventListener('change', () => { if(recognition) recognition.lang = langSelect.value; });
 
 /// Table Functionality ///

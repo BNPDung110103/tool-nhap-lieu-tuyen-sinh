@@ -124,11 +124,15 @@
         <div id="global-recording-status" class="global-status hidden">
             <div class="pulse-ring"></div>
             <span id="listening-indicator-text">Đang nghe...</span>
-            <button id="stop-global-mic" class="btn btn-danger btn-circle" title="Dừng thu âm"><i class="fa-solid fa-stop"></i></button>
+            <div class="voice-actions">
+                <button id="retry-voice-btn" class="btn btn-warning" title="Đọc lại"><i class="fa-solid fa-rotate-right"></i> Đọc lại</button>
+                <button id="accept-voice-btn" class="btn btn-success" title="Chốt và điền"><i class="fa-solid fa-check"></i> Chốt điền</button>
+                <button id="cancel-voice-btn" class="btn btn-danger btn-circle" title="Tắt Mic"><i class="fa-solid fa-xmark"></i></button>
+            </div>
         </div>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <script src="app.js?v=4"></script>
+    <script src="app.js?v=5"></script>
 </body>
 </html>
